@@ -1,9 +1,9 @@
 class ReiGraph < Formula
   desc "Local-first developer memory + DAG execution layer for coding agents"
   homepage "https://github.com/plexideas/rei-graph"
-  url "https://github.com/plexideas/rei-graph/releases/download/v0.2.6/rei_cli-0.2.6-py3-none-any.whl"
-  sha256 "2f9d9e54d302321cf1c2383daa03e67ab92fb84daf73f368446f9422ad80c2bc"
-  version "0.2.6"
+  url "https://github.com/plexideas/rei-graph/releases/download/v0.2.7/rei_cli-0.2.7-py3-none-any.whl"
+  sha256 "e34a853b59f953578d7afa8a3dc812ab92961685a0f219af47678a0b80944438"
+  version "0.2.7"
   license "MIT"
 
   depends_on "python@3.12"
