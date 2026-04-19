@@ -15,7 +15,7 @@ class ReiGraph < Formula
     # The wheel already contains the compiled TypeScript ingester — no
     # Node.js runtime is required.
     venv = virtualenv_create(libexec, "python3.12")
-    system libexec/"bin/pip", "install", cached_download
+    venv.pip_install cached_download
     bin.install_symlink libexec/"bin/rei"
   end
 
