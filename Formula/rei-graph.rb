@@ -16,7 +16,7 @@ class ReiGraph < Formula
     # Copy to a clean name before installing.
     wheel = buildpath/"rei_cli-#{version}-py3-none-any.whl"
     cp cached_download, wheel
-    system libexec/"bin/pip", "install", "--no-deps", wheel
+    system libexec/"bin/pip", "install", wheel
     bin.install_symlink libexec/"bin/rei"
   end
 
