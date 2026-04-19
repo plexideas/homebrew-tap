@@ -17,6 +17,20 @@ class ReiGraph < Formula
     wheel = buildpath/"rei_cli-#{version}-py3-none-any.whl"
     cp cached_download, wheel
     system libexec/"bin/pip", "install", wheel
+
+    # cryptography's Rust extension ships with @rpath dylib IDs and minimal
+    # Mach-O header padding. Homebrew's relocation step fails when the absolute
+    # opt-prefix path is longer than the available header space. Fix: change
+    # @rpath/... IDs to @loader_path/basename so Homebrew's fixup skips them.
+    # Python loads extensions via dlopen(absolute_path, ...) and ignores the ID.
+    Dir["#{libexec}/**/*.so"].each do |f|
+      id = `otool -D #{f.shellescape} 2>/dev/null`.lines.last&.strip.to_s
+      next unless id.start_with?("@rpath/")
+
+      new_id = "@loader_path/#{File.basename(id.delete_prefix("@rpath/"))}"
+      system "install_name_tool", "-id", new_id, f
+    end
+
     bin.install_symlink libexec/"bin/rei"
   end
 
