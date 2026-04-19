@@ -8,6 +8,15 @@ class ReiGraph < Formula
 
   depends_on "python@3.12"
 
+  # Rust-compiled Python extensions (cryptography, pydantic-core, rpds) ship
+  # with @rpath/... dylib IDs and minimal Mach-O header padding. Homebrew's
+  # dylib_id_for() would rewrite these to absolute opt-prefix paths whose
+  # length exceeds what fits in the header, producing "Updated load commands
+  # do not fit" errors. preserve_rpath tells Homebrew to leave @rpath IDs
+  # unchanged. Python extension modules are loaded via dlopen(absolute_path)
+  # so the dylib ID is never used for resolution at runtime.
+  preserve_rpath
+
   def install
     # python -m venv creates a venv with pip included by default.
     system Formula["python@3.12"].opt_bin/"python3.12", "-m", "venv", libexec
@@ -17,19 +26,6 @@ class ReiGraph < Formula
     wheel = buildpath/"rei_cli-#{version}-py3-none-any.whl"
     cp cached_download, wheel
     system libexec/"bin/pip", "install", wheel
-
-    # cryptography's Rust extension ships with @rpath dylib IDs and minimal
-    # Mach-O header padding. Homebrew's relocation step fails when the absolute
-    # opt-prefix path is longer than the available header space. Fix: change
-    # @rpath/... IDs to @loader_path/basename so Homebrew's fixup skips them.
-    # Python loads extensions via dlopen(absolute_path, ...) and ignores the ID.
-    Dir["#{libexec}/**/*.so"].each do |f|
-      id = `otool -D #{f.shellescape} 2>/dev/null`.lines.last&.strip.to_s
-      next unless id.start_with?("@rpath/")
-
-      new_id = "@loader_path/#{File.basename(id.delete_prefix("@rpath/"))}"
-      system "install_name_tool", "-id", new_id, f
-    end
 
     bin.install_symlink libexec/"bin/rei"
   end
