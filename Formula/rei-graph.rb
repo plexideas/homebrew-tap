@@ -1,6 +1,4 @@
 class ReiGraph < Formula
-  include Language::Python::Virtualenv
-
   desc "Local-first developer memory + DAG execution layer for coding agents"
   homepage "https://github.com/plexideas/rei-graph"
   url "https://github.com/plexideas/rei-graph/releases/download/v0.1.0/rei_cli-0.1.0-py3-none-any.whl"
@@ -11,11 +9,12 @@ class ReiGraph < Formula
   depends_on "python@3.12"
 
   def install
-    # Create an isolated virtualenv and install the pre-built wheel.
-    # The wheel already contains the compiled TypeScript ingester — no
-    # Node.js runtime is required.
-    venv = virtualenv_create(libexec, "python3.12")
-    venv.pip_install cached_download
+    # python -m venv (without --without-pip) creates a venv that includes pip.
+    # The wheel is self-contained: rei_core/rei_storage/rei_mcp are bundled
+    # inside it, so pip only needs to fetch click, rich, pydantic, neo4j, mcp
+    # from PyPI.
+    system Formula["python@3.12"].opt_bin/"python3.12", "-m", "venv", libexec
+    system libexec/"bin/pip", "install", cached_download
     bin.install_symlink libexec/"bin/rei"
   end
 
