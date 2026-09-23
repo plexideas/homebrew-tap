@@ -1,8 +1,8 @@
 cask "naro" do
-  version "0.5.4"
-  sha256 "1e207510ce8706a0c8f0c23ba1827a62fdd50a5d1cd9f3270494228290dcefe3"
+  version "0.6.0"
+  sha256 "f691fed1820c30e036652e6c38f0b73c04c8fedf93559b01a253619d0071a787"
 
-  url "https://github.com/plexideas/naro/releases/download/v#{version}/Naro-#{version}-17-arm64.zip"
+  url "https://github.com/plexideas/naro/releases/download/v#{version}/Naro-#{version}-19-arm64.zip"
   name "Naro"
   desc "Open Office files in Google editors and sync changes locally"
   homepage "https://github.com/plexideas/naro"
